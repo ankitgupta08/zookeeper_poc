@@ -23,9 +23,24 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
 
 - Download and untar [Apache Zookeeper C Binding](https://zookeeper.apache.org/releases.html) stable release
 
+Compile ZooKeeper C Binding
+
+From top directory:
+```
+mvn clean install -DskipTests
+```
+Move to `zookeeper-client/zookeeper-client-c/`
+```
+./configure
+make
+make check
+sudo make install
+```
+
+
 - Start Zookeeper Server [**Mode:** Standalone] 
 
-Create conf/zoo.conf with below details:
+Create conf/zoo.cfg with below details:
 ```
 tickTime=2000
 dataDir=/home/vboxuser/zk_test/data
@@ -40,6 +55,64 @@ Using config: conf/zoo.cfg
 Starting zookeeper ... STARTED
 ```
 Check Status: bin/zkServer.sh status
+
+- Replicated Zookeeper (Multi-Server on a single VM) [**Mode:** Leader and Follower] 
+
+Create conf/zoo1.cfg, conf/zoo2.cfg and conf/zoo3.cfg
+```
+$ cat conf/zoo1.cfg 
+tickTime=2000
+initLimit=5
+syncLimit=2
+dataDir=/home/vboxuser/zk_test/data1
+clientPort=2181
+server.1=localhost:2888:3888
+server.2=localhost:2889:3889
+server.3=localhost:2890:3890
+
+$ cat conf/zoo2.cfg 
+tickTime=2000
+dataDir=/home/vboxuser/zk_test/data2
+clientPort=2182
+initLimit=5
+syncLimit=2
+server.1=localhost:2888:3888
+server.2=localhost:2889:3889
+server.3=localhost:2890:3890
+
+$ cat conf/zoo3.cfg 
+tickTime=2000
+dataDir=/home/vboxuser/zk_test/data3
+clientPort=2183
+initLimit=5
+syncLimit=2
+server.1=localhost:2888:3888
+server.2=localhost:2889:3889
+server.3=localhost:2890:3890
+```
+Also, create myid file in each dataDir path and add one line to it:
+For e.g:
+```
+~/zk_test/data2$ cat myid
+2
+```
+The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing else. Similarly for server 2 and 3.
+
+Now, Run 3 ZK Servers from 3 terminals (via bin/zkServer.sh start-foreground conf/zoo1.cfg). Same with zoo2.cfg amd zoo3.cfg
+
+Next, You can run PHP script to connect with ZK APIs (Refer Usage section)
+
+Verify using ZK CLI that data is replicated to all servers.
+E.g:
+```
+$ bin/zkCli.sh -server 127.0.0.1:2182
+```
+Change the port to connect with different server.
+
+- Verify Transaction Logs (created in dataDir path):
+```
+$ bin/zkTxnLogToolkit.sh ../../data2/version-2/log.400000001
+```
 
 # Usage
 
