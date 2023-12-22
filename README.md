@@ -102,7 +102,7 @@ Now, Run 3 ZK Servers from 3 terminals (via bin/zkServer.sh start-foreground con
 
 Next, You can run PHP script to connect with ZK APIs (Refer Usage section)
 
-Verify using ZK CLI that data is replicated to all servers.
+Verify using [ZK CLI](https://zookeeper.apache.org/doc/current/zookeeperCLI.html) that data is replicated to all servers.
 E.g:
 ```
 $ bin/zkCli.sh -server 127.0.0.1:2182
@@ -119,26 +119,35 @@ $ bin/zkTxnLogToolkit.sh ../../data2/version-2/log.400000001
 > Usage: php zkService.php [connectionString] [operation] Valid operation: create, get, update and delete
 
 1. Create
+
+Usage: php zkService.php [connectionString] [operation] [nodePath] [nodeData]
 ```
 php zkService.php localhost:2181 create /person "Ankit G!"
 ```
 
 2. Get
+
+Usage: php zkService.php [connectionString] [operation] [nodePath]
 ```
 php zkService.php localhost:2181 get /person
 ```
 
 3. Update
+
+Usage: php zkService.php [connectionString] [operation] [nodePath] [newData]
 ```
 php zkService.php localhost:2181 update /person "New data..."
 ```
 
 4. Delete
+
+Usage: php zkService.php [connectionString] [operation] [nodePath]
 ```
 php zkService.php localhost:2181 delete /person
 ```
 
 # References
-- https://zookeeper.apache.org/doc/current/zookeeperStarted.html
-- https://www.php.net/manual/en/book.zookeeper.php
-- https://github.com/php-zookeeper/php-zookeeper
+- [ZooKeeper Getting Started](https://zookeeper.apache.org/doc/current/zookeeperStarted.html)
+- [PHP ZooKeeper Manual](https://www.php.net/manual/en/book.zookeeper.php)
+- [PECL Page](https://pecl.php.net/package/zookeeper)
+- [PHP ZooKeeper extension](https://github.com/php-zookeeper/php-zookeeper)
