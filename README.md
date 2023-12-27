@@ -21,9 +21,9 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
 
 # Setup
 
-- Download and untar [Apache Zookeeper C Binding](https://zookeeper.apache.org/releases.html) stable release
+### 1. Download and untar [Apache Zookeeper C Binding](https://zookeeper.apache.org/releases.html) stable release
 
-  Compile ZooKeeper C Binding
+- Compile ZooKeeper C Binding
 
   From top directory:
   ```
@@ -36,7 +36,6 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
   make check
   sudo make install
   ```
-
 
 - Start Zookeeper Server [**Mode:** Standalone] 
 
@@ -55,8 +54,6 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
   Starting zookeeper ... STARTED
   ```
   Check Status: bin/zkServer.sh status
-
-  Next, You can run PHP script to connect with ZK APIs (Refer Usage section)
 
 - Replicated Zookeeper (Multi-Server on a single VM) [**Mode:** Leader and Follower] 
 
@@ -98,13 +95,31 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
   ~/zk_test/data2$ cat myid
   2
   ```
-  The myid file consists of a single line containing only the text of that machine's id. So myid of server 1 would contain the text "1" and nothing     else. Similarly for server 2 and 3.
+  The myid file consists of a single line containing only the text of that machine's id. So, myid of server 1 would contain the text "1" and nothing     else. Similarly for server 2 and 3.
 
   Now, Run 3 ZK Servers from 3 terminals (via bin/zkServer.sh start-foreground conf/zoo1.cfg). Same with zoo2.cfg amd zoo3.cfg
 
-  Next, You can run PHP script to connect with ZK APIs (Refer Usage section)
+### 2. Download and untar [PHP Zookeeper Extension](https://pecl.php.net/package/zookeeper) stable release
 
-  Verify using [ZK CLI](https://zookeeper.apache.org/doc/current/zookeeperCLI.html) that data is replicated to all servers.
+- Compile PHP Zookeeper Extension
+  ```
+  $ phpize7.2
+  $ ./configure --with-php-config=/usr/bin/php-config7.2 --with-libzookeeper-dir=/path/to/zookeeper-c-binding
+  $ make
+  $ sudo make install
+  ```
+  `/path/to/zookeeper-c-binding` is the install prefix of ZooKeeper C Binding, which must contain the include/zookeeper/zookeeper.h
+
+  Next, update php.ini file to include zookeeper extension. Add below line, for eg:
+  ```
+  extension=/usr/lib/php/20170718/zookeeper.so
+  ```
+
+Now, You can run PHP script to connect with ZK APIs (Refer `Usage` section)
+
+### 3. Verify Zookeeper database and logs
+
+- Verify using [ZK CLI](https://zookeeper.apache.org/doc/current/zookeeperCLI.html) that data is replicated to all servers.
   E.g:
   ```
   $ bin/zkCli.sh -server 127.0.0.1:2182
@@ -120,28 +135,28 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
 
 > Usage: php zkService.php [connectionString] [operation] Valid operation: create, get, update and delete
 
-1. Create
+### 1. Create
 
   Usage: php zkStart.php [connectionString] create [nodePath] [nodeData]
   ```
   php zkStart.php localhost:2181 create /person "Ankit Gupta!"
   ```
 
-2. Get
+#### 2. Get
 
   Usage: php zkStart.php [connectionString] get [nodePath]
   ```
   php zkStart.php localhost:2181 get /person
   ```
 
-3. Update
+#### 3. Update
 
   Usage: php zkStart.php [connectionString] update [nodePath] [newData]
   ```
   php zkStart.php localhost:2181 update /person "Some new data..."
   ```
 
-4. Delete
+#### 4. Delete
 
   Usage: php zkStart.php [connectionString] delete [nodePath]
   ```
@@ -149,7 +164,8 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
   ```
 
 # References
+- [Medium Page - What is ZooKeeper](https://medium.com/@gavindya/what-is-zookeeper-db8dfc30fc9b)
 - [ZooKeeper Getting Started](https://zookeeper.apache.org/doc/current/zookeeperStarted.html)
 - [PHP ZooKeeper Manual](https://www.php.net/manual/en/book.zookeeper.php)
-- [PECL Page](https://pecl.php.net/package/zookeeper)
-- [PHP ZooKeeper extension](https://github.com/php-zookeeper/php-zookeeper)
+- [PECL Page - ZooKeeper package](https://pecl.php.net/package/zookeeper)
+- [GH - PHP ZooKeeper extension](https://github.com/php-zookeeper/php-zookeeper)
