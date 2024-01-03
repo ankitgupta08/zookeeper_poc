@@ -29,7 +29,12 @@ PHP 7.2.34-43+ubuntu22.04.1+deb.sury.org+1 (cli) (built: Sep  2 2023 08:01:34) (
   ```
   mvn clean install -DskipTests
   ```
-  Move to `zookeeper-client/zookeeper-client-c/`
+  **NOTE:** Before running above mvn command, set the JAVA_HOME environment variable to the path where the JDK is installed i.e.
+  ```
+  export JAVA_HOME=/path/to/your/jdk
+  export PATH=$JAVA_HOME/bin:$PATH
+  ```
+  Next, move to `zookeeper-client/zookeeper-client-c/`
   ```
   ./configure
   make
